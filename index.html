@@ -6,21 +6,90 @@
     <title>Karen and Friends</title>
     <link rel="stylesheet" href="style.css">
   </head>
-  <body>
-    <main class="game" aria-label="Игра Karen and Friends">
-      <section class="controls controls-left" aria-label="Управление лошадью">
-        <button type="button" data-action="mount">Сесть на лошадь</button>
-        <button type="button" data-action="dismount">Слезть с лошади</button>
+  <body data-screen="menu">
+    <section class="main-menu" aria-label="Выбор персонажа">
+      <div class="menu-panel">
+        <h1>Karen and Friends</h1>
+        <p>Выбери персонажа</p>
+        <div class="character-list">
+          <button type="button" class="character-button is-active" data-start-character="KAREN">KAREN</button>
+          <button type="button" class="character-button" disabled>Razolter</button>
+          <button type="button" class="character-button" disabled>Flaffy</button>
+          <button type="button" class="character-button" disabled>Sidius</button>
+          <button type="button" class="character-button" disabled>Игорь-Игорь</button>
+          <button type="button" class="character-button" disabled>B4CHA</button>
+          <button type="button" class="character-button" disabled>ЛЕГЕНДА</button>
+          <button type="button" class="character-button" disabled>MIND</button>
+        </div>
+      </div>
+    </section>
+
+    <main class="game" aria-label="Игра Karen and Friends" aria-hidden="true">
+      <button type="button" class="menu-return" data-return-menu>Вернуться в меню</button>
+
+      <section class="action-panel" aria-label="Действия">
+        <div class="animal-tabs" role="tablist" aria-label="Выбор животного">
+          <button type="button" class="animal-tab is-selected" data-animal-tab="horse" role="tab" aria-selected="true">Лошадь</button>
+          <button type="button" class="animal-tab" data-animal-tab="cat" role="tab" aria-selected="false">Кошка</button>
+        </div>
+
+        <div class="animal-actions is-open" data-animal-actions="horse">
+          <button type="button" data-action="mount">Сесть на лошадь</button>
+          <button type="button" data-action="dismount">Слезть с лошади</button>
+        </div>
+
+        <div class="animal-actions" data-animal-actions="cat" hidden>
+          <button type="button" data-cat="sit">Сидеть</button>
+          <button type="button" data-cat="lie">Лежать</button>
+          <button type="button" data-cat="jump">Прыгать</button>
+          <button type="button" data-cat="stand">Стоять</button>
+          <button type="button" data-move="left">Влево</button>
+          <button type="button" data-move="right">Вправо</button>
+        </div>
       </section>
 
-      <section class="controls controls-right" aria-label="Управление кошкой">
-        <button type="button" data-cat="sit">Сидеть</button>
-        <button type="button" data-cat="lie">Лежать</button>
-        <button type="button" data-cat="jump">Прыгать</button>
-        <button type="button" data-cat="stand">Стоять</button>
-        <button type="button" data-move="left">Влево</button>
-        <button type="button" data-move="right">Вправо</button>
+      <section class="status-panel" aria-label="Данные персонажа">
+        <div class="status-row mood-row">
+          <span class="status-label">Настроение:</span>
+          <div class="mood-display" aria-label="Настроение 100%">
+            <span class="mood-face" data-mood-face>😄</span>
+            <span class="mood-percent" data-mood-percent>100%</span>
+          </div>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Деньги:</span>
+          <span class="money-value" data-money>0$</span>
+        </div>
+        <div class="status-tools">
+          <button type="button" class="icon-button" data-panel-toggle="inventory" aria-label="Открыть инвентарь" title="Инвентарь">▤ инв</button>
+          <button type="button" class="icon-button" data-panel-toggle="shop" aria-label="Открыть магазин" title="Магазин">$ Магаз</button>
+        </div>
       </section>
+
+      <aside class="slide-panel inventory-panel" data-slide-panel="inventory" aria-label="Инвентарь" aria-hidden="true">
+        <h2>Инвентарь</h2>
+        <div class="inventory-list" data-inventory-list>
+          <p class="empty-note">Пока пусто</p>
+        </div>
+      </aside>
+
+      <aside class="slide-panel shop-panel" data-slide-panel="shop" aria-label="Магазин" aria-hidden="true">
+        <h2>Магазин</h2>
+        <div class="shop-list">
+          <button type="button" class="shop-item" data-buy-item="Яблоко" data-price="5">
+            <span>Яблоко</span>
+            <strong>5$</strong>
+          </button>
+          <button type="button" class="shop-item" data-buy-item="Лента" data-price="12">
+            <span>Лента</span>
+            <strong>12$</strong>
+          </button>
+          <button type="button" class="shop-item" data-buy-item="Игрушка" data-price="20">
+            <span>Игрушка</span>
+            <strong>20$</strong>
+          </button>
+        </div>
+      </aside>
 
       <div class="sky">
         <span class="cloud cloud-one"></span>

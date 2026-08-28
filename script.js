@@ -1,11 +1,26 @@
 const scene = document.querySelector(".scene");
 const message = document.querySelector(".message");
 const karenSpeech = document.querySelector(".speech");
+const game = document.querySelector(".game");
+const startKarenButton = document.querySelector("[data-start-character='KAREN']");
+const returnMenuButton = document.querySelector("[data-return-menu]");
+const animalTabs = document.querySelectorAll("[data-animal-tab]");
+const animalActions = document.querySelectorAll("[data-animal-actions]");
+const panelButtons = document.querySelectorAll("[data-panel-toggle]");
+const slidePanels = document.querySelectorAll("[data-slide-panel]");
+const moneyValue = document.querySelector("[data-money]");
+const moodFace = document.querySelector("[data-mood-face]");
+const moodPercent = document.querySelector("[data-mood-percent]");
+const inventoryList = document.querySelector("[data-inventory-list]");
+const shopItems = document.querySelectorAll("[data-buy-item]");
 const catSpeechText = "Я тебя дрессирую кошечка, выполняй команды";
 let catX = 0;
 let speechTimer = 0;
 let horseSpeechTimer = 0;
 let horseHideTimer = 0;
+let money = 0;
+let mood = 100;
+const inventory = [];
 
 const catMessages = {
   sit: "Кошка сидит и смотрит на Karen.",
@@ -15,6 +30,146 @@ const catMessages = {
   left: "Кошка идет влево.",
   right: "Кошка идет вправо."
 };
+
+startKarenButton.addEventListener("click", () => {
+  document.body.dataset.screen = "game";
+  game.setAttribute("aria-hidden", "false");
+  document.querySelector("[data-animal-tab='horse']").focus();
+});
+
+returnMenuButton.addEventListener("click", () => {
+  document.body.dataset.screen = "menu";
+  game.setAttribute("aria-hidden", "true");
+  clearHorseDialogue();
+  scene.dataset.speaking = "false";
+  slidePanels.forEach((panel) => {
+    panel.classList.remove("is-open");
+    panel.setAttribute("aria-hidden", "true");
+  });
+  panelButtons.forEach((button) => {
+    button.classList.remove("is-selected");
+  });
+  startKarenButton.focus();
+});
+
+animalTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    const animal = tab.dataset.animalTab;
+
+    animalTabs.forEach((button) => {
+      const isSelected = button === tab;
+      button.classList.toggle("is-selected", isSelected);
+      button.setAttribute("aria-selected", String(isSelected));
+    });
+
+    animalActions.forEach((actions) => {
+      const isOpen = actions.dataset.animalActions === animal;
+      actions.hidden = !isOpen;
+      actions.classList.toggle("is-open", isOpen);
+    });
+  });
+});
+
+function renderInventory() {
+  inventoryList.innerHTML = "";
+
+  if (inventory.length === 0) {
+    const emptyNote = document.createElement("p");
+    emptyNote.className = "empty-note";
+    emptyNote.textContent = "Пока пусто";
+    inventoryList.append(emptyNote);
+    return;
+  }
+
+  inventory.forEach((item) => {
+    const inventoryItem = document.createElement("div");
+    inventoryItem.className = "inventory-item";
+    inventoryItem.textContent = item;
+    inventoryList.append(inventoryItem);
+  });
+}
+
+function getMoodFace(value) {
+  if (value > 80) {
+    return "😄";
+  }
+
+  if (value > 60) {
+    return "🙂";
+  }
+
+  if (value > 40) {
+    return "😐";
+  }
+
+  if (value > 20) {
+    return "😟";
+  }
+
+  return "😢";
+}
+
+function renderMood() {
+  moodFace.textContent = getMoodFace(mood);
+  moodPercent.textContent = `${mood}%`;
+  moodFace.parentElement.setAttribute("aria-label", `Настроение ${mood}%`);
+}
+
+function decreaseMood() {
+  mood = Math.max(0, mood - 1);
+  renderMood();
+}
+
+function renderMoney() {
+  moneyValue.textContent = `${money}$`;
+  shopItems.forEach((item) => {
+    item.disabled = money < Number(item.dataset.price);
+  });
+}
+
+function setOpenPanel(panelName) {
+  const activePanel = [...slidePanels].find((panel) => panel.classList.contains("is-open"));
+  const shouldClose = activePanel?.dataset.slidePanel === panelName;
+
+  slidePanels.forEach((panel) => {
+    const isOpen = !shouldClose && panel.dataset.slidePanel === panelName;
+    panel.classList.toggle("is-open", isOpen);
+    panel.setAttribute("aria-hidden", String(!isOpen));
+  });
+
+  panelButtons.forEach((button) => {
+    button.classList.toggle("is-selected", !shouldClose && button.dataset.panelToggle === panelName);
+  });
+}
+
+panelButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    setOpenPanel(button.dataset.panelToggle);
+  });
+});
+
+shopItems.forEach((item) => {
+  item.addEventListener("click", () => {
+    const price = Number(item.dataset.price);
+
+    if (money < price) {
+      message.textContent = "Недостаточно денег.";
+      return;
+    }
+
+    money -= price;
+    inventory.push(item.dataset.buyItem);
+    renderMoney();
+    renderInventory();
+    setOpenPanel("inventory");
+    message.textContent = `${item.dataset.buyItem} добавлено в инвентарь.`;
+  });
+});
+
+renderMoney();
+renderInventory();
+renderMood();
+window.setInterval(decreaseMood, 60000);
 
 function showKarenSpeech(text = catSpeechText, duration = 1800) {
   karenSpeech.textContent = text;
