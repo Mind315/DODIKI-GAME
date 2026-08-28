@@ -34,6 +34,7 @@ const catMessages = {
 startKarenButton.addEventListener("click", () => {
   document.body.dataset.screen = "game";
   game.setAttribute("aria-hidden", "false");
+  closeAnimalActions();
   document.querySelector("[data-animal-tab='horse']").focus();
 });
 
@@ -69,6 +70,18 @@ animalTabs.forEach((tab) => {
     });
   });
 });
+
+function closeAnimalActions() {
+  animalTabs.forEach((button) => {
+    button.classList.remove("is-selected");
+    button.setAttribute("aria-selected", "false");
+  });
+
+  animalActions.forEach((actions) => {
+    actions.hidden = true;
+    actions.classList.remove("is-open");
+  });
+}
 
 function renderInventory() {
   inventoryList.innerHTML = "";

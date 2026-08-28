@@ -29,11 +29,11 @@
 
       <section class="action-panel" aria-label="Действия">
         <div class="animal-tabs" role="tablist" aria-label="Выбор животного">
-          <button type="button" class="animal-tab is-selected" data-animal-tab="horse" role="tab" aria-selected="true">Лошадь</button>
+          <button type="button" class="animal-tab" data-animal-tab="horse" role="tab" aria-selected="false">Лошадь</button>
           <button type="button" class="animal-tab" data-animal-tab="cat" role="tab" aria-selected="false">Кошка</button>
         </div>
 
-        <div class="animal-actions is-open" data-animal-actions="horse">
+        <div class="animal-actions" data-animal-actions="horse" hidden>
           <button type="button" data-action="mount">Сесть на лошадь</button>
           <button type="button" data-action="dismount">Слезть с лошади</button>
         </div>
