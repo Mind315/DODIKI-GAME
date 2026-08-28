@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Karen and Friends</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <main class="game" aria-label="Игра Karen and Friends">
+      <section class="controls controls-left" aria-label="Управление лошадью">
+        <button type="button" data-action="mount">Сесть на лошадь</button>
+        <button type="button" data-action="dismount">Слезть с лошади</button>
+      </section>
+
+      <section class="controls controls-right" aria-label="Управление кошкой">
+        <button type="button" data-cat="sit">Сидеть</button>
+        <button type="button" data-cat="lie">Лежать</button>
+        <button type="button" data-cat="jump">Прыгать</button>
+        <button type="button" data-cat="stand">Стоять</button>
+        <button type="button" data-move="left">Влево</button>
+        <button type="button" data-move="right">Вправо</button>
+      </section>
+
+      <div class="sky">
+        <span class="cloud cloud-one"></span>
+        <span class="cloud cloud-two"></span>
+        <span class="sun"></span>
+      </div>
+
+      <div class="scene" data-riding="false" data-cat-state="sit">
+        <div class="horse" aria-label="Лошадь">
+          <span class="horse-speech">я не машина, какой руль блять, Карен???</span>
+          <span class="horse-tail"></span>
+          <span class="horse-body"></span>
+          <span class="horse-neck"></span>
+          <span class="horse-head"></span>
+          <span class="horse-ear horse-ear-left"></span>
+          <span class="horse-ear horse-ear-right"></span>
+          <span class="horse-mane"></span>
+          <span class="horse-eye"></span>
+          <span class="horse-leg leg-front-one"></span>
+          <span class="horse-leg leg-front-two"></span>
+          <span class="horse-leg leg-back-one"></span>
+          <span class="horse-leg leg-back-two"></span>
+          <span class="saddle"></span>
+        </div>
+
+        <div class="person" aria-label="Karen">
+          <span class="name-tag">KAREN</span>
+          <span class="speech">Я тебя дрессирую кошечка, выполняй команды</span>
+          <span class="head"></span>
+          <span class="hair"></span>
+          <span class="body"></span>
+          <span class="arm arm-left"></span>
+          <span class="arm arm-right"></span>
+          <span class="leg person-leg-left"></span>
+          <span class="leg person-leg-right"></span>
+        </div>
+
+        <div class="cat" aria-label="Кошка">
+          <span class="cat-tail"></span>
+          <span class="cat-body"></span>
+          <span class="cat-head"></span>
+          <span class="cat-ear cat-ear-left"></span>
+          <span class="cat-ear cat-ear-right"></span>
+          <span class="cat-eye cat-eye-left"></span>
+          <span class="cat-eye cat-eye-right"></span>
+          <span class="cat-leg cat-leg-one"></span>
+          <span class="cat-leg cat-leg-two"></span>
+        </div>
+
+        <div class="message" aria-live="polite">Кошка сидит и смотрит на Karen.</div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
