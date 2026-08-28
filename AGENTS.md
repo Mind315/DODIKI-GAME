@@ -3,7 +3,7 @@
 ## Project
 
 This is a small browser game made with plain HTML, CSS, and JavaScript.
-The current playable character is KAREN. The page opens with a character menu, and only KAREN is active for now.
+The current playable characters are KAREN and Razolter. The page opens with a character menu.
 
 Main files:
 
@@ -18,7 +18,7 @@ Main files:
 - Do not remove or rewrite existing gameplay unless the user asks for that change.
 - Do not change disabled menu characters into playable characters until their game logic exists.
 - When adding a new character, add the menu button, character-specific markup/styles, and JavaScript behavior together.
-- Keep KAREN as the default working character until another character is fully implemented.
+- Keep KAREN and Razolter working when changing shared UI.
 - Use Russian text for visible UI when adding labels, messages, or buttons.
 - Make sure the game still works by opening `index.html` directly in a browser.
 - Before committing, check `git status` and include only related files.
@@ -28,10 +28,10 @@ Main files:
 Active:
 
 - KAREN
+- Razolter
 
 Disabled / planned:
 
-- Razolter
 - Flaffy
 - Sidius
 - Игорь-Игорь

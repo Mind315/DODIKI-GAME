@@ -133,6 +133,10 @@ body[data-screen="game"] .main-menu {
   display: none;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 .action-panel {
   position: fixed;
   top: 18px;
@@ -195,6 +199,16 @@ body[data-screen="game"] .main-menu {
 }
 
 .animal-actions button {
+  width: 100%;
+}
+
+.razolter-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.razolter-actions button,
+.razolter-action-button {
   width: 100%;
 }
 
@@ -350,6 +364,201 @@ body[data-screen="game"] .main-menu {
   position: absolute;
   inset: 0 0 42vh;
   pointer-events: none;
+}
+
+.room {
+  position: absolute;
+  inset: 0;
+  display: none;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.room * {
+  position: absolute;
+  display: block;
+}
+
+.wall-back {
+  inset: 74px 14vw 28vh;
+  border: 2px solid rgba(82, 63, 52, 0.18);
+  background:
+    linear-gradient(90deg, rgba(112, 80, 58, 0.08) 1px, transparent 1px),
+    linear-gradient(#d7b89c, #c99c78);
+  background-size: 54px 100%, auto;
+}
+
+.wall-left {
+  left: 0;
+  top: 74px;
+  bottom: 28vh;
+  width: 16vw;
+  background: linear-gradient(120deg, #b88363, #8f624d);
+  clip-path: polygon(0 0, 100% 0, 82% 100%, 0 100%);
+}
+
+.wall-right {
+  right: 0;
+  top: 74px;
+  bottom: 28vh;
+  width: 16vw;
+  background: linear-gradient(240deg, #b88363, #8f624d);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 18% 100%);
+}
+
+.room-ceiling {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 96px;
+  background: linear-gradient(#8d5d45, #b07a5b);
+}
+
+.room-roof {
+  left: 50%;
+  top: 10px;
+  width: 70vw;
+  height: 70px;
+  transform: translateX(-50%);
+  background:
+    repeating-linear-gradient(90deg, rgba(60, 35, 25, 0.2) 0 5px, transparent 5px 72px),
+    linear-gradient(#6e3f30, #9b6046);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.room-floor {
+  left: -8vw;
+  right: -8vw;
+  bottom: 0;
+  height: 33vh;
+  background:
+    repeating-linear-gradient(90deg, rgba(80, 45, 26, 0.18) 0 2px, transparent 2px 70px),
+    linear-gradient(#b87845, #81502f);
+}
+
+.bed {
+  left: 18vw;
+  bottom: 25vh;
+  width: 210px;
+  height: 82px;
+  border-radius: 10px 10px 8px 8px;
+  background: #6b4a3a;
+  box-shadow: 0 14px 22px rgba(55, 38, 25, 0.18);
+}
+
+.bed::before,
+.bed::after {
+  position: absolute;
+  bottom: -22px;
+  width: 16px;
+  height: 24px;
+  border-radius: 4px;
+  background: #4e3328;
+  content: "";
+}
+
+.bed::before {
+  left: 18px;
+}
+
+.bed::after {
+  right: 18px;
+}
+
+.bed-pillow {
+  left: 14px;
+  top: 12px;
+  width: 58px;
+  height: 38px;
+  border-radius: 14px;
+  background: #f5efe7;
+}
+
+.bed-blanket {
+  right: 12px;
+  top: 10px;
+  width: 126px;
+  height: 54px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #5d4a8f, #7c6bb1);
+}
+
+.fridge {
+  right: 18vw;
+  bottom: 29vh;
+  width: 86px;
+  height: 150px;
+  border: 3px solid rgba(38, 50, 56, 0.3);
+  border-radius: 8px 8px 6px 6px;
+  background: linear-gradient(#edf8ff, #c7dbe6);
+  box-shadow: inset 0 -55px 0 rgba(151, 181, 195, 0.22), 0 12px 20px rgba(55, 38, 25, 0.16);
+}
+
+.fridge::before {
+  left: 0;
+  top: 52px;
+  width: 100%;
+  height: 3px;
+  background: rgba(38, 50, 56, 0.22);
+  content: "";
+}
+
+.fridge-handle {
+  right: 12px;
+  top: 68px;
+  width: 7px;
+  height: 42px;
+  border-radius: 6px;
+  background: #78909c;
+}
+
+.room-spot {
+  left: 57%;
+  bottom: 14vh;
+  display: none;
+  width: 58px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.24);
+  transform: rotate(-8deg);
+}
+
+body[data-character="RAZOLTER"][data-private-spot="true"] .room-spot {
+  display: block;
+  animation: room-spot-appear 240ms ease-out both;
+}
+
+body[data-character="RAZOLTER"] .room .fridge {
+  transition: transform 260ms ease;
+  transform-origin: left center;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="beer"] .fridge {
+  transform: rotateY(-12deg);
+}
+
+body[data-character="RAZOLTER"] {
+  background: #b87845;
+}
+
+body[data-character="RAZOLTER"] .sky,
+body[data-character="RAZOLTER"] .horse,
+body[data-character="RAZOLTER"] .person,
+body[data-character="RAZOLTER"] .cat {
+  display: none;
+}
+
+body[data-character="RAZOLTER"] .room {
+  display: block;
+}
+
+body[data-character="RAZOLTER"] .scene::before {
+  background: transparent;
+}
+
+body[data-character="KAREN"] .razolter {
+  display: none;
 }
 
 .sun {
@@ -775,6 +984,276 @@ body[data-screen="game"] .main-menu {
   transform: rotate(-54deg);
 }
 
+.razolter,
+.razolter * {
+  position: absolute;
+}
+
+.razolter {
+  left: 392px;
+  bottom: 122px;
+  display: none;
+  width: 150px;
+  height: 250px;
+  transform-origin: 75px 220px;
+  animation: razolter-idle 2.4s ease-in-out infinite;
+}
+
+body[data-character="RAZOLTER"] .razolter {
+  display: block;
+}
+
+.razolter-name {
+  left: 20px;
+  top: 0;
+  min-width: 110px;
+}
+
+.razolter-speech {
+  left: 82px;
+  top: -76px;
+  display: none;
+  width: 230px;
+  padding: 10px 12px;
+  border: 2px solid rgba(38, 50, 56, 0.82);
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+  z-index: 8;
+}
+
+.razolter-speech::after {
+  position: absolute;
+  left: 18px;
+  bottom: -10px;
+  width: 16px;
+  height: 16px;
+  border-right: 2px solid rgba(38, 50, 56, 0.82);
+  border-bottom: 2px solid rgba(38, 50, 56, 0.82);
+  background: #ffffff;
+  transform: rotate(45deg);
+  content: "";
+}
+
+body[data-character="RAZOLTER"][data-razolter-speaking="true"] .razolter-speech {
+  display: block;
+}
+
+.razolter-head {
+  left: 48px;
+  top: 48px;
+  width: 54px;
+  height: 58px;
+  border-radius: 50%;
+  background: #d7a06f;
+  box-shadow: inset -7px -4px 0 rgba(88, 53, 31, 0.16);
+}
+
+.razolter-head::before,
+.razolter-head::after {
+  position: absolute;
+  top: 21px;
+  width: 12px;
+  height: 2px;
+  border-radius: 4px;
+  background: #050505;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.28);
+  content: "";
+  transition: width 120ms ease, height 120ms ease, border-radius 120ms ease, transform 120ms ease;
+}
+
+.razolter-head::before {
+  left: 15px;
+}
+
+.razolter-head::after {
+  right: 11px;
+}
+
+.razolter-hair {
+  left: 48px;
+  top: 38px;
+  width: 54px;
+  height: 12px;
+  border-radius: 18px 18px 8px 8px;
+  background: #20232b;
+  box-shadow: 0 8px 0 #20232b;
+}
+
+.razolter-body {
+  left: 42px;
+  top: 108px;
+  width: 66px;
+  height: 86px;
+  border-radius: 16px 16px 12px 12px;
+  background: #5d4a8f;
+  box-shadow: inset 0 -14px 0 rgba(0, 0, 0, 0.12);
+}
+
+.razolter-arm {
+  top: 116px;
+  width: 16px;
+  height: 72px;
+  border-radius: 14px;
+  background: #d7a06f;
+  transform-origin: top center;
+}
+
+.razolter-arm-left {
+  left: 30px;
+  transform: rotate(16deg);
+}
+
+.razolter-arm-right {
+  right: 28px;
+  transform: rotate(-16deg);
+}
+
+.razolter-leg {
+  top: 190px;
+  width: 20px;
+  height: 58px;
+  border-radius: 12px;
+  background: #263238;
+}
+
+.razolter-leg-left {
+  left: 50px;
+}
+
+.razolter-leg-right {
+  left: 82px;
+}
+
+.razolter-note {
+  top: 18px;
+  display: none;
+  color: #5d4a8f;
+  font-size: 28px;
+  font-weight: 900;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.72);
+}
+
+.note-one {
+  left: 112px;
+}
+
+.note-two {
+  left: 132px;
+  top: 42px;
+}
+
+.razolter::after {
+  position: absolute;
+  left: 99px;
+  top: 164px;
+  display: none;
+  width: 22px;
+  height: 11px;
+  border-radius: 4px;
+  background:#d7a06f;
+  background-size: 10px 4px;
+  content: "";
+  z-index: 6;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="pushup"] .razolter {
+  animation: razolter-pushup 900ms ease-in-out infinite;
+  transform-origin: 80px 220px;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="pushup"] .razolter-arm-left,
+body[data-character="RAZOLTER"][data-razolter-state="pushup"] .razolter-arm-right {
+  transform: rotate(78deg);
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="pushup"] .razolter-leg-left,
+body[data-character="RAZOLTER"][data-razolter-state="pushup"] .razolter-leg-right {
+  transform: rotate(78deg);
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="sleep"] .razolter {
+  animation: razolter-sleep 2s ease-in-out infinite;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="sleep"] .razolter-arm-left,
+body[data-character="RAZOLTER"][data-razolter-state="sleep"] .razolter-arm-right {
+  transform: rotate(82deg);
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="sleep"] .razolter-leg-left,
+body[data-character="RAZOLTER"][data-razolter-state="sleep"] .razolter-leg-right {
+  transform: rotate(80deg);
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="sleep"] .razolter-name {
+  display: none;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="sleep"] .razolter-speech {
+  left: -132px;
+  top: 54px;
+  transform: rotate(-88deg);
+  transform-origin: left top;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="eyes"] .razolter-head::before,
+body[data-character="RAZOLTER"][data-razolter-state="eyes"] .razolter-head::after {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: translateY(-2px);
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="fridge"] .razolter,
+body[data-character="RAZOLTER"][data-razolter-state="beer"] .razolter {
+  animation: razolter-walk-fridge 1.1s ease-in-out both;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="beer"] .razolter-arm-right {
+  animation: razolter-grab 700ms ease-in-out infinite;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="sing"] .razolter {
+  animation: razolter-sing 900ms ease-in-out infinite;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="sing"] .razolter-note {
+  display: block;
+  animation: music-note 900ms ease-out infinite;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="sing"] .note-two {
+  animation-delay: 220ms;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="dance"] .razolter {
+  animation: razolter-dance 700ms ease-in-out infinite;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="dance"] .razolter-arm-left {
+  animation: razolter-dance-arm-left 700ms ease-in-out infinite;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="dance"] .razolter-arm-right {
+  animation: razolter-dance-arm-right 700ms ease-in-out infinite;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="private"] .razolter {
+  animation: razolter-private 850ms ease-in-out infinite;
+  filter: saturate(1.12);
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="private"] .razolter::after {
+  display: block;
+}
+
+body[data-character="RAZOLTER"][data-razolter-state="private"] .razolter-arm-right {
+  animation: razolter-private-arm 520ms ease-in-out infinite;
+}
+
 .cat {
   right: 150px;
   bottom: 150px;
@@ -967,6 +1446,133 @@ body[data-screen="game"] .main-menu {
   }
 }
 
+@keyframes razolter-idle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+@keyframes razolter-pushup {
+  0%, 100% {
+    transform: translate(-12px, 36px) rotate(82deg);
+  }
+  50% {
+    transform: translate(-12px, 58px) rotate(82deg);
+  }
+}
+
+@keyframes razolter-sleep {
+  0%, 100% {
+    transform: translate(-220px, -72px) rotate(88deg);
+  }
+  50% {
+    transform: translate(-220px, -72px) rotate(88deg);
+  }
+}
+
+@keyframes razolter-walk-fridge {
+  0% {
+    transform: translateX(0);
+  }
+  45% {
+    transform: translateX(110px) rotate(-2deg);
+  }
+  100% {
+    transform: translateX(220px);
+  }
+}
+
+@keyframes razolter-grab {
+  0%, 100% {
+    transform: rotate(-16deg);
+  }
+  50% {
+    transform: rotate(-82deg) translateY(-8px);
+  }
+}
+
+@keyframes razolter-sing {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(2deg);
+  }
+}
+
+@keyframes music-note {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.8);
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-32px) scale(1.12);
+  }
+}
+
+@keyframes razolter-dance {
+  0%, 100% {
+    transform: translateX(-8px) rotate(-7deg);
+  }
+  50% {
+    transform: translateX(8px) rotate(7deg);
+  }
+}
+
+@keyframes razolter-dance-arm-left {
+  0%, 100% {
+    transform: rotate(-54deg);
+  }
+  50% {
+    transform: rotate(42deg);
+  }
+}
+
+@keyframes razolter-dance-arm-right {
+  0%, 100% {
+    transform: rotate(54deg);
+  }
+  50% {
+    transform: rotate(-42deg);
+  }
+}
+
+@keyframes razolter-private {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(2px) scale(0.98);
+  }
+}
+
+@keyframes razolter-private-arm {
+  0%, 100% {
+    transform: rotate(-18deg) translate(-2px, -4px);
+  }
+  50% {
+    transform: rotate(-18deg) translate(10px, 18px);
+  }
+}
+
+@keyframes room-spot-appear {
+  from {
+    opacity: 0;
+    transform: rotate(-8deg) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-8deg) scale(1);
+  }
+}
+
 @keyframes tail-swish {
   from {
     transform: rotate(18deg);
@@ -1120,5 +1726,46 @@ body[data-screen="game"] .main-menu {
     height: 560px;
     transform: translateX(-50%) scale(0.72);
     transform-origin: top center;
+  }
+
+  body[data-character="RAZOLTER"] .scene {
+    top: 230px;
+  }
+
+  body[data-character="RAZOLTER"] .razolter {
+    left: 282px;
+    bottom: 132px;
+  }
+
+  body[data-character="RAZOLTER"] .bed {
+    left: 16vw;
+    bottom: 27vh;
+    width: 180px;
+  }
+
+  body[data-character="RAZOLTER"] .razolter-speech {
+    left: -10px;
+    top: -94px;
+    width: 190px;
+    font-size: 12px;
+  }
+
+  body[data-character="RAZOLTER"][data-razolter-state="sleep"] .razolter-speech {
+    left: 26px;
+    top: 44px;
+    transform: rotate(-88deg);
+  }
+
+  body[data-character="RAZOLTER"] .wall-back {
+    inset: 52px 10vw 30vh;
+  }
+
+  body[data-character="RAZOLTER"] .room-ceiling {
+    height: 68px;
+  }
+
+  body[data-character="RAZOLTER"] .room-roof {
+    top: 7px;
+    height: 52px;
   }
 }

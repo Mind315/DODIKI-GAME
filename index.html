@@ -13,7 +13,7 @@
         <p>Выбери персонажа</p>
         <div class="character-list">
           <button type="button" class="character-button is-active" data-start-character="KAREN">KAREN</button>
-          <button type="button" class="character-button" disabled>Razolter</button>
+          <button type="button" class="character-button is-active" data-start-character="RAZOLTER">Razolter</button>
           <button type="button" class="character-button" disabled>Flaffy</button>
           <button type="button" class="character-button" disabled>Sidius</button>
           <button type="button" class="character-button" disabled>Игорь-Игорь</button>
@@ -27,7 +27,7 @@
     <main class="game" aria-label="Игра Karen and Friends" aria-hidden="true">
       <button type="button" class="menu-return" data-return-menu>Вернуться в меню</button>
 
-      <section class="action-panel" aria-label="Действия">
+      <section class="action-panel karen-action-panel" data-character-panel="KAREN" aria-label="Действия Karen">
         <div class="animal-tabs" role="tablist" aria-label="Выбор животного">
           <button type="button" class="animal-tab" data-animal-tab="horse" role="tab" aria-selected="false">Лошадь</button>
           <button type="button" class="animal-tab" data-animal-tab="cat" role="tab" aria-selected="false">Кошка</button>
@@ -45,6 +45,20 @@
           <button type="button" data-cat="stand">Стоять</button>
           <button type="button" data-move="left">Влево</button>
           <button type="button" data-move="right">Вправо</button>
+        </div>
+      </section>
+
+      <section class="action-panel razolter-action-panel" data-character-panel="RAZOLTER" aria-label="Действия Razolter" hidden>
+        <button type="button" class="razolter-action-button" data-razolter-action>Действия</button>
+        <div class="razolter-actions" data-razolter-actions hidden>
+          <button type="button" data-razolter-move="pushup">Отжаться</button>
+          <button type="button" data-razolter-move="sleep">Лечь спать</button>
+          <button type="button" data-razolter-move="fridge">Подойти к холодильнику</button>
+          <button type="button" data-razolter-move="beer">Достать пиво</button>
+          <button type="button" data-razolter-move="sing">Петь песню</button>
+          <button type="button" data-razolter-move="dance">Танцевать</button>
+          <button type="button" data-razolter-move="eyes">Открыть глаза</button>
+          <button type="button" data-razolter-move="private">Мастурбировать</button>
         </div>
       </section>
 
@@ -97,6 +111,23 @@
         <span class="sun"></span>
       </div>
 
+      <div class="room" aria-hidden="true">
+        <span class="room-wall wall-back"></span>
+        <span class="room-wall wall-left"></span>
+        <span class="room-wall wall-right"></span>
+        <span class="room-ceiling"></span>
+        <span class="room-roof"></span>
+        <span class="room-floor"></span>
+        <span class="bed">
+          <span class="bed-pillow"></span>
+          <span class="bed-blanket"></span>
+        </span>
+        <span class="fridge">
+          <span class="fridge-handle"></span>
+        </span>
+        <span class="room-spot" aria-hidden="true"></span>
+      </div>
+
       <div class="scene" data-riding="false" data-cat-state="sit">
         <div class="horse" aria-label="Лошадь">
           <span class="horse-speech">я не машина, какой руль блять, Карен???</span>
@@ -137,6 +168,20 @@
           <span class="cat-eye cat-eye-right"></span>
           <span class="cat-leg cat-leg-one"></span>
           <span class="cat-leg cat-leg-two"></span>
+        </div>
+
+        <div class="razolter" aria-label="Razolter">
+          <span class="name-tag razolter-name">RAZOLTER</span>
+          <span class="razolter-speech" data-razolter-speech></span>
+          <span class="razolter-head"></span>
+          <span class="razolter-hair"></span>
+          <span class="razolter-body"></span>
+          <span class="razolter-arm razolter-arm-left"></span>
+          <span class="razolter-arm razolter-arm-right"></span>
+          <span class="razolter-leg razolter-leg-left"></span>
+          <span class="razolter-leg razolter-leg-right"></span>
+          <span class="razolter-note note-one">♪</span>
+          <span class="razolter-note note-two">♫</span>
         </div>
 
         <div class="message" aria-live="polite">Кошка сидит и смотрит на Karen.</div>

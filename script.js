@@ -3,9 +3,15 @@ const message = document.querySelector(".message");
 const karenSpeech = document.querySelector(".speech");
 const game = document.querySelector(".game");
 const startKarenButton = document.querySelector("[data-start-character='KAREN']");
+const startCharacterButtons = document.querySelectorAll("[data-start-character]");
 const returnMenuButton = document.querySelector("[data-return-menu]");
+const characterPanels = document.querySelectorAll("[data-character-panel]");
 const animalTabs = document.querySelectorAll("[data-animal-tab]");
 const animalActions = document.querySelectorAll("[data-animal-actions]");
+const razolterActionButton = document.querySelector("[data-razolter-action]");
+const razolterActions = document.querySelector("[data-razolter-actions]");
+const razolterMoveButtons = document.querySelectorAll("[data-razolter-move]");
+const razolterSpeech = document.querySelector("[data-razolter-speech]");
 const panelButtons = document.querySelectorAll("[data-panel-toggle]");
 const slidePanels = document.querySelectorAll("[data-slide-panel]");
 const moneyValue = document.querySelector("[data-money]");
@@ -18,9 +24,20 @@ let catX = 0;
 let speechTimer = 0;
 let horseSpeechTimer = 0;
 let horseHideTimer = 0;
+let razolterActionTimer = 0;
 let money = 0;
-let mood = 100;
-const inventory = [];
+let currentCharacter = "KAREN";
+let karenMoodTick = 0;
+const characterMoods = {
+  KAREN: 100,
+  RAZOLTER: 100
+};
+const characterInventories = {
+  KAREN: [],
+  RAZOLTER: ["светлое", "темное", "стаут", "шмаут"]
+};
+const moodItems = ["светлое", "темное", "стаут", "шмаут"];
+let nextDrinkIndex = 0;
 
 const catMessages = {
   sit: "Кошка сидит и смотрит на Karen.",
@@ -31,11 +48,48 @@ const catMessages = {
   right: "Кошка идет вправо."
 };
 
-startKarenButton.addEventListener("click", () => {
+function setCharacter(character) {
+  currentCharacter = character;
+  document.body.dataset.character = character;
+
+  characterPanels.forEach((panel) => {
+    const isActive = panel.dataset.characterPanel === character;
+    panel.hidden = !isActive;
+  });
+
+  closeAnimalActions();
+  closeRazolterActions();
+  scene.dataset.riding = "false";
+  scene.dataset.speaking = "false";
+  clearHorseDialogue();
+
+  if (character === "RAZOLTER") {
+    message.textContent = "Razolter стоит в комнате.";
+  } else {
+    message.textContent = catMessages.sit;
+  }
+
+  renderInventory();
+  renderMood();
+}
+
+function startGame(character) {
   document.body.dataset.screen = "game";
   game.setAttribute("aria-hidden", "false");
-  closeAnimalActions();
+  setCharacter(character);
+
+  if (character === "RAZOLTER") {
+    document.querySelector("[data-razolter-action]").focus();
+    return;
+  }
+
   document.querySelector("[data-animal-tab='horse']").focus();
+}
+
+startCharacterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    startGame(button.dataset.startCharacter);
+  });
 });
 
 returnMenuButton.addEventListener("click", () => {
@@ -83,7 +137,48 @@ function closeAnimalActions() {
   });
 }
 
+function closeRazolterActions() {
+  razolterActions.hidden = true;
+  razolterActionButton.classList.remove("is-selected");
+  window.clearTimeout(razolterActionTimer);
+  delete document.body.dataset.razolterState;
+  delete document.body.dataset.privateSpot;
+  clearRazolterSpeech();
+}
+
+function showRazolterSpeech(text) {
+  razolterSpeech.textContent = text;
+  document.body.dataset.razolterSpeaking = "true";
+}
+
+function clearRazolterSpeech() {
+  razolterSpeech.textContent = "";
+  delete document.body.dataset.razolterSpeaking;
+}
+
+function playRazolterAction(action, duration = 2200, onComplete) {
+  window.clearTimeout(razolterActionTimer);
+  document.body.dataset.razolterState = action;
+  delete document.body.dataset.privateSpot;
+  razolterActionTimer = window.setTimeout(() => {
+    delete document.body.dataset.razolterState;
+    clearRazolterSpeech();
+    onComplete?.();
+  }, duration);
+}
+
+function addRazolterDrink() {
+  const drink = moodItems[nextDrinkIndex];
+  nextDrinkIndex = (nextDrinkIndex + 1) % moodItems.length;
+  characterInventories.RAZOLTER.push(drink);
+  renderInventory();
+  setOpenPanel("inventory");
+  message.textContent = `Razolter достал ${drink}.`;
+  playRazolterAction("beer", 2400);
+}
+
 function renderInventory() {
+  const inventory = characterInventories[currentCharacter];
   inventoryList.innerHTML = "";
 
   if (inventory.length === 0) {
@@ -94,10 +189,22 @@ function renderInventory() {
     return;
   }
 
-  inventory.forEach((item) => {
-    const inventoryItem = document.createElement("div");
+  inventory.forEach((item, index) => {
+    const isMoodItem = moodItems.includes(item);
+    const inventoryItem = document.createElement(isMoodItem ? "button" : "div");
     inventoryItem.className = "inventory-item";
     inventoryItem.textContent = item;
+
+    if (isMoodItem) {
+      inventoryItem.type = "button";
+      inventoryItem.addEventListener("click", () => {
+        inventory.splice(index, 1);
+        changeMood(5);
+        renderInventory();
+        message.textContent = `${item} использовано. Настроение +5%.`;
+      });
+    }
+
     inventoryList.append(inventoryItem);
   });
 }
@@ -123,14 +230,37 @@ function getMoodFace(value) {
 }
 
 function renderMood() {
+  const mood = characterMoods[currentCharacter];
   moodFace.textContent = getMoodFace(mood);
   moodPercent.textContent = `${mood}%`;
   moodFace.parentElement.setAttribute("aria-label", `Настроение ${mood}%`);
 }
 
-function decreaseMood() {
-  mood = Math.max(0, mood - 1);
+function changeMood(amount) {
+  characterMoods[currentCharacter] = Math.max(0, Math.min(100, characterMoods[currentCharacter] + amount));
   renderMood();
+}
+
+function decreaseMood() {
+  changeMood(-1);
+}
+
+function tickMood() {
+  if (document.body.dataset.screen !== "game") {
+    return;
+  }
+
+  if (currentCharacter === "RAZOLTER") {
+    decreaseMood();
+    return;
+  }
+
+  karenMoodTick += 5;
+
+  if (karenMoodTick >= 60) {
+    karenMoodTick = 0;
+    decreaseMood();
+  }
 }
 
 function renderMoney() {
@@ -171,7 +301,7 @@ shopItems.forEach((item) => {
     }
 
     money -= price;
-    inventory.push(item.dataset.buyItem);
+    characterInventories[currentCharacter].push(item.dataset.buyItem);
     renderMoney();
     renderInventory();
     setOpenPanel("inventory");
@@ -182,7 +312,7 @@ shopItems.forEach((item) => {
 renderMoney();
 renderInventory();
 renderMood();
-window.setInterval(decreaseMood, 60000);
+window.setInterval(tickMood, 5000);
 
 function showKarenSpeech(text = catSpeechText, duration = 1800) {
   karenSpeech.textContent = text;
@@ -255,5 +385,57 @@ document.querySelectorAll("[data-cat]").forEach((button) => {
 document.querySelectorAll("[data-move]").forEach((button) => {
   button.addEventListener("click", () => {
     moveCat(button.dataset.move);
+  });
+});
+
+const razolterMessages = {
+  pushup: "Razolter отжался и почувствовал себя бодрее.",
+  sleep: "Razolter лег спать.",
+  fridge: "Razolter подошел к холодильнику.",
+  sing: "Razolter поет песню.",
+  dance: "Razolter танцует.",
+  eyes: "Razolter открыл глаза.",
+  private: "Razolter уединился."
+};
+
+const razolterActionDurations = {
+  pushup: 3200,
+  sleep: 6200,
+  fridge: 2400,
+  sing: 3200,
+  dance: 3200,
+  eyes: 4000,
+  private: 7600
+};
+
+const razolterActionSpeech = {
+  pushup: "я стану сильный, похудею и девки мне покажут сиси",
+  sleep: "я высплюсь, и новый день это новая бутылочка пивка"
+};
+
+razolterActionButton.addEventListener("click", () => {
+  const isOpen = razolterActions.hidden;
+  razolterActions.hidden = !isOpen;
+  razolterActionButton.classList.toggle("is-selected", isOpen);
+});
+
+razolterMoveButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const action = button.dataset.razolterMove;
+
+    if (action === "beer") {
+      addRazolterDrink();
+      return;
+    }
+
+    playRazolterAction(action, razolterActionDurations[action], () => {
+      if (action === "private") {
+        document.body.dataset.privateSpot = "true";
+      }
+    });
+    if (razolterActionSpeech[action]) {
+      showRazolterSpeech(razolterActionSpeech[action]);
+    }
+    message.textContent = razolterMessages[action];
   });
 });
