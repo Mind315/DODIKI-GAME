@@ -54,7 +54,9 @@
           <button type="button" data-razolter-move="pushup">Отжаться</button>
           <button type="button" data-razolter-move="sleep">Лечь спать</button>
           <button type="button" data-razolter-move="fridge">Подойти к холодильнику</button>
-          <button type="button" data-razolter-move="beer">Достать пиво</button>
+          <span class="beer-hint" data-beer-hint title="Сначала подойди к холодильнику">
+            <button type="button" data-razolter-move="beer" disabled>Достать пиво</button>
+          </span>
           <button type="button" data-razolter-move="sing">Петь песню</button>
           <button type="button" data-razolter-move="dance">Танцевать</button>
           <button type="button" data-razolter-move="eyes">Открыть глаза</button>
@@ -123,7 +125,14 @@
           <span class="bed-blanket"></span>
         </span>
         <span class="fridge">
-          <span class="fridge-handle"></span>
+          <span class="fridge-beers">
+            <span class="fridge-beer"></span>
+            <span class="fridge-beer"></span>
+            <span class="fridge-beer"></span>
+          </span>
+          <span class="fridge-door">
+            <span class="fridge-handle"></span>
+          </span>
         </span>
         <span class="room-spot" aria-hidden="true"></span>
       </div>

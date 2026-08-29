@@ -11,7 +11,12 @@ const animalActions = document.querySelectorAll("[data-animal-actions]");
 const razolterActionButton = document.querySelector("[data-razolter-action]");
 const razolterActions = document.querySelector("[data-razolter-actions]");
 const razolterMoveButtons = document.querySelectorAll("[data-razolter-move]");
+const beerButton = document.querySelector("[data-razolter-move='beer']");
+const beerHint = document.querySelector("[data-beer-hint]");
+const fridgeBeerEls = document.querySelectorAll(".fridge-beer");
 const razolterSpeech = document.querySelector("[data-razolter-speech]");
+let fridgeBeers = fridgeBeerEls.length;
+let emptyBeerTimer = 0;
 const panelButtons = document.querySelectorAll("[data-panel-toggle]");
 const slidePanels = document.querySelectorAll("[data-slide-panel]");
 const moneyValue = document.querySelector("[data-money]");
@@ -37,7 +42,6 @@ const characterInventories = {
   RAZOLTER: ["светлое", "темное", "стаут", "шмаут"]
 };
 const moodItems = ["светлое", "темное", "стаут", "шмаут"];
-let nextDrinkIndex = 0;
 
 const catMessages = {
   sit: "Кошка сидит и смотрит на Karen.",
@@ -137,12 +141,29 @@ function closeAnimalActions() {
   });
 }
 
+function updateBeerHint() {
+  beerHint.title = beerButton.disabled ? "Сначала подойди к холодильнику" : "";
+}
+
+function setBeerEnabled(enabled) {
+  beerButton.disabled = !enabled;
+  updateBeerHint();
+}
+
+function closeFridge() {
+  delete document.body.dataset.atFridge;
+  delete document.body.dataset.fridgeOpen;
+  setBeerEnabled(false);
+}
+
 function closeRazolterActions() {
   razolterActions.hidden = true;
   razolterActionButton.classList.remove("is-selected");
   window.clearTimeout(razolterActionTimer);
+  window.clearTimeout(emptyBeerTimer);
   delete document.body.dataset.razolterState;
   delete document.body.dataset.privateSpot;
+  closeFridge();
   clearRazolterSpeech();
 }
 
@@ -158,23 +179,29 @@ function clearRazolterSpeech() {
 
 function playRazolterAction(action, duration = 2200, onComplete) {
   window.clearTimeout(razolterActionTimer);
+  window.clearTimeout(emptyBeerTimer);
   document.body.dataset.razolterState = action;
   delete document.body.dataset.privateSpot;
+  if (action !== "fridge" && action !== "beer") {
+    closeFridge();
+  }
   razolterActionTimer = window.setTimeout(() => {
+    if (action === "fridge") {
+      document.body.dataset.atFridge = "true";
+      document.body.dataset.fridgeOpen = "true";
+      delete document.body.dataset.razolterState;
+      setBeerEnabled(true);
+      showRazolterSpeech("ооо теперкь могу пивка бахнуть");
+      onComplete?.();
+      return;
+    }
+
     delete document.body.dataset.razolterState;
-    clearRazolterSpeech();
+    if (action !== "beer") {
+      clearRazolterSpeech();
+    }
     onComplete?.();
   }, duration);
-}
-
-function addRazolterDrink() {
-  const drink = moodItems[nextDrinkIndex];
-  nextDrinkIndex = (nextDrinkIndex + 1) % moodItems.length;
-  characterInventories.RAZOLTER.push(drink);
-  renderInventory();
-  setOpenPanel("inventory");
-  message.textContent = `Razolter достал ${drink}.`;
-  playRazolterAction("beer", 2400);
 }
 
 function renderInventory() {
@@ -401,7 +428,7 @@ const razolterMessages = {
 const razolterActionDurations = {
   pushup: 3200,
   sleep: 6200,
-  fridge: 2400,
+  fridge: 1200,
   sing: 3200,
   dance: 3200,
   eyes: 4000,
@@ -410,7 +437,8 @@ const razolterActionDurations = {
 
 const razolterActionSpeech = {
   pushup: "я стану сильный, похудею и девки мне покажут сиси",
-  sleep: "я высплюсь, и новый день это новая бутылочка пивка"
+  sleep: "я высплюсь, и новый день это новая бутылочка пивка",
+  eyes: "оо я вижу потолок и пол, как интересно"
 };
 
 razolterActionButton.addEventListener("click", () => {
@@ -424,7 +452,38 @@ razolterMoveButtons.forEach((button) => {
     const action = button.dataset.razolterMove;
 
     if (action === "beer") {
-      addRazolterDrink();
+      if (fridgeBeers === 0) {
+        window.clearTimeout(emptyBeerTimer);
+        showRazolterSpeech("оййй бляя, где пивко моё родненькое сукааа");
+        characterMoods[currentCharacter] = 0;
+        renderMood();
+        message.textContent = "оййй бляя, где пивко моё родненькое сукааа";
+        emptyBeerTimer = window.setTimeout(() => {
+          delete document.body.dataset.fridgeOpen;
+          delete document.body.dataset.atFridge;
+          setBeerEnabled(false);
+          window.clearTimeout(razolterActionTimer);
+          document.body.dataset.razolterState = "floor-sleep";
+          showRazolterSpeech("я не хочу в этом мире быть, я спать лучше лягу");
+          message.textContent = "я не хочу в этом мире быть, я спать лучше лягу";
+        }, 3000);
+        return;
+      }
+
+      fridgeBeers -= 1;
+      fridgeBeerEls[fridgeBeers].hidden = true;
+      playRazolterAction("beer", 2400);
+      showRazolterSpeech("буль буль буль буль, еще глоточек, как же хорошо");
+      changeMood(50);
+      message.textContent = "Razolter бахнул пивка.";
+      return;
+    }
+
+    if (action === "fridge" && document.body.dataset.atFridge === "true") {
+      document.body.dataset.fridgeOpen = "true";
+      setBeerEnabled(true);
+      showRazolterSpeech("ооо теперкь могу пивка бахнуть");
+      message.textContent = razolterMessages.fridge;
       return;
     }
 
