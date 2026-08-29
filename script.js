@@ -15,6 +15,9 @@ const beerButton = document.querySelector("[data-razolter-move='beer']");
 const beerHint = document.querySelector("[data-beer-hint]");
 const fridgeBeerEls = document.querySelectorAll(".fridge-beer");
 const razolterSpeech = document.querySelector("[data-razolter-speech]");
+const loginField = document.querySelector("[data-login-field]");
+const passwordField = document.querySelector("[data-password-field]");
+const loginError = document.querySelector("[data-login-error]");
 let fridgeBeers = fridgeBeerEls.length;
 let emptyBeerTimer = 0;
 const panelButtons = document.querySelectorAll("[data-panel-toggle]");
@@ -150,6 +153,21 @@ function setBeerEnabled(enabled) {
   updateBeerHint();
 }
 
+function closeVonpts() {
+  delete document.body.dataset.vonpts;
+  delete document.body.dataset.vonptsScreen;
+  delete document.body.dataset.deskBeer;
+  if (loginField) {
+    loginField.textContent = "";
+  }
+  if (passwordField) {
+    passwordField.textContent = "";
+  }
+  if (loginError) {
+    loginError.textContent = "";
+  }
+}
+
 function closeFridge() {
   delete document.body.dataset.atFridge;
   delete document.body.dataset.fridgeOpen;
@@ -164,6 +182,7 @@ function closeRazolterActions() {
   delete document.body.dataset.razolterState;
   delete document.body.dataset.privateSpot;
   closeFridge();
+  closeVonpts();
   clearRazolterSpeech();
 }
 
@@ -181,6 +200,7 @@ function playBeerAndPrivate() {
   window.clearTimeout(razolterActionTimer);
   window.clearTimeout(emptyBeerTimer);
   delete document.body.dataset.privateSpot;
+  closeVonpts();
   document.body.dataset.razolterState = "fridge";
   message.textContent = "Razolter идет к холодильнику за пивом.";
 
@@ -208,11 +228,127 @@ function playBeerAndPrivate() {
   }, 1200);
 }
 
+function typeFieldText(field, text, onDone) {
+  field.textContent = "";
+  loginError.textContent = "";
+  let i = 0;
+  document.body.dataset.razolterState = "desk-type";
+
+  function tick() {
+    if (i >= text.length) {
+      onDone?.();
+      return;
+    }
+
+    field.textContent += text[i];
+    i += 1;
+    razolterActionTimer = window.setTimeout(tick, 90);
+  }
+
+  tick();
+}
+
+function takeFridgeBeer() {
+  if (fridgeBeers <= 0) {
+    return;
+  }
+
+  fridgeBeers -= 1;
+  fridgeBeerEls[fridgeBeers].hidden = true;
+}
+
+function drinkDeskBeer(count, onDone) {
+  if (count <= 0) {
+    onDone?.();
+    return;
+  }
+
+  document.body.dataset.fridgeOpen = "true";
+  document.body.dataset.razolterState = "desk-drink";
+  delete document.body.dataset.deskBeer;
+  takeFridgeBeer();
+  razolterActionTimer = window.setTimeout(() => {
+    document.body.dataset.deskBeer = "true";
+    message.textContent = `Razolter выпивает бутылку (${4 - count}/3).`;
+
+    razolterActionTimer = window.setTimeout(() => {
+      delete document.body.dataset.deskBeer;
+      drinkDeskBeer(count - 1, onDone);
+    }, 1100);
+  }, 40);
+}
+
+function playVonptsLogin() {
+  window.clearTimeout(razolterActionTimer);
+  window.clearTimeout(emptyBeerTimer);
+  delete document.body.dataset.privateSpot;
+  closeFridge();
+  closeVonpts();
+  clearRazolterSpeech();
+
+  document.body.dataset.vonpts = "true";
+  document.body.dataset.razolterState = "desk";
+  message.textContent = "Появился стол. Razolter садится за стол.";
+
+  razolterActionTimer = window.setTimeout(() => {
+    document.body.dataset.vonptsScreen = "true";
+    message.textContent = "Появился экран ВОНПТС.";
+
+    razolterActionTimer = window.setTimeout(() => {
+      typeFieldText(loginField, "rs_ququetp", () => {
+        document.body.dataset.razolterState = "desk";
+        message.textContent = "В логин введён пароль.";
+
+        razolterActionTimer = window.setTimeout(() => {
+          drinkDeskBeer(3, () => {
+            document.body.dataset.razolterState = "desk";
+            showRazolterSpeech("теперь ввожу пароль");
+            message.textContent = "теперь ввожу пароль";
+
+            razolterActionTimer = window.setTimeout(() => {
+              clearRazolterSpeech();
+              typeFieldText(loginField, "rs_ququetp", () => {
+                document.body.dataset.razolterState = "desk";
+                message.textContent = "Пароль по ошибке введён в поле логина.";
+                let errorsLeft = 5;
+
+                function showError() {
+                  if (errorsLeft <= 0) {
+                    showRazolterSpeech("ааааа сукаааа,  я напишу в сапорт вы ничего не понимаете");
+                    message.textContent = "ааааа сукаааа,  я напишу в сапорт вы ничего не понимаете";
+
+                    razolterActionTimer = window.setTimeout(() => {
+                      closeVonpts();
+                      delete document.body.dataset.fridgeOpen;
+                      document.body.dataset.razolterState = "floor-sleep";
+                      showRazolterSpeech("короче я спать");
+                      message.textContent = "короче я спать";
+                    }, 2800);
+                    return;
+                  }
+
+                  loginError.textContent = "неверный пароль или логин";
+                  message.textContent = `неверный пароль или логин (${6 - errorsLeft}/5)`;
+                  errorsLeft -= 1;
+                  razolterActionTimer = window.setTimeout(showError, 700);
+                }
+
+                showError();
+              });
+            }, 1600);
+          });
+        }, 600);
+      });
+    }, 700);
+  }, 900);
+}
+
 function playRazolterAction(action, duration = 2200, onComplete) {
   window.clearTimeout(razolterActionTimer);
   window.clearTimeout(emptyBeerTimer);
   document.body.dataset.razolterState = action;
   delete document.body.dataset.privateSpot;
+  closeVonpts();
   if (action !== "fridge" && action !== "beer" && action !== "beer-private") {
     closeFridge();
   }
@@ -481,6 +617,11 @@ razolterActionButton.addEventListener("click", () => {
 razolterMoveButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const action = button.dataset.razolterMove;
+
+    if (action === "vonpts") {
+      playVonptsLogin();
+      return;
+    }
 
     if (action === "beer-private") {
       playBeerAndPrivate();
