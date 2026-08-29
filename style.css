@@ -1298,6 +1298,23 @@ body[data-character="RAZOLTER"][data-at-fridge="true"][data-razolter-state="beer
   animation: razolter-grab 700ms ease-in-out infinite;
 }
 
+body[data-character="RAZOLTER"][data-at-fridge="true"][data-razolter-state="beer-private"] .razolter {
+  animation: razolter-beer-private 850ms ease-in-out infinite;
+  filter: saturate(1.12);
+}
+
+body[data-character="RAZOLTER"][data-at-fridge="true"][data-razolter-state="beer-private"] .razolter::after {
+  display: block;
+}
+
+body[data-character="RAZOLTER"][data-at-fridge="true"][data-razolter-state="beer-private"] .razolter-arm-left {
+  animation: razolter-grab 700ms ease-in-out infinite;
+}
+
+body[data-character="RAZOLTER"][data-at-fridge="true"][data-razolter-state="beer-private"] .razolter-arm-right {
+  animation: razolter-private-arm 520ms ease-in-out infinite;
+}
+
 body[data-character="RAZOLTER"][data-razolter-state="sing"] .razolter {
   animation: razolter-sing 900ms ease-in-out infinite;
 }
@@ -1641,6 +1658,15 @@ body[data-character="RAZOLTER"][data-razolter-state="private"] .razolter-arm-rig
   }
   50% {
     transform: translateY(2px) scale(0.98);
+  }
+}
+
+@keyframes razolter-beer-private {
+  0%, 100% {
+    transform: translateX(220px) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(220px) translateY(2px) scale(0.98);
   }
 }
 

@@ -177,12 +177,43 @@ function clearRazolterSpeech() {
   delete document.body.dataset.razolterSpeaking;
 }
 
+function playBeerAndPrivate() {
+  window.clearTimeout(razolterActionTimer);
+  window.clearTimeout(emptyBeerTimer);
+  delete document.body.dataset.privateSpot;
+  document.body.dataset.razolterState = "fridge";
+  message.textContent = "Razolter идет к холодильнику за пивом.";
+
+  razolterActionTimer = window.setTimeout(() => {
+    document.body.dataset.atFridge = "true";
+    document.body.dataset.fridgeOpen = "true";
+    setBeerEnabled(true);
+    document.body.dataset.razolterState = "beer";
+
+    if (fridgeBeers > 0) {
+      fridgeBeers -= 1;
+      fridgeBeerEls[fridgeBeers].hidden = true;
+    }
+
+    razolterActionTimer = window.setTimeout(() => {
+      document.body.dataset.razolterState = "beer-private";
+      showRazolterSpeech("пиво и дрочка это лучшее наслаждение, аа даааа, еее божееее");
+      message.textContent = "Razolter пьет пиво и дрочит.";
+
+      razolterActionTimer = window.setTimeout(() => {
+        delete document.body.dataset.razolterState;
+        clearRazolterSpeech();
+      }, 7600);
+    }, 1800);
+  }, 1200);
+}
+
 function playRazolterAction(action, duration = 2200, onComplete) {
   window.clearTimeout(razolterActionTimer);
   window.clearTimeout(emptyBeerTimer);
   document.body.dataset.razolterState = action;
   delete document.body.dataset.privateSpot;
-  if (action !== "fridge" && action !== "beer") {
+  if (action !== "fridge" && action !== "beer" && action !== "beer-private") {
     closeFridge();
   }
   razolterActionTimer = window.setTimeout(() => {
@@ -450,6 +481,11 @@ razolterActionButton.addEventListener("click", () => {
 razolterMoveButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const action = button.dataset.razolterMove;
+
+    if (action === "beer-private") {
+      playBeerAndPrivate();
+      return;
+    }
 
     if (action === "beer") {
       if (fridgeBeers === 0) {
